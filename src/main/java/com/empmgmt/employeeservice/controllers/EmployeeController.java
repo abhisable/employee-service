@@ -15,19 +15,17 @@ import com.empmgmt.employeeservice.service.EmployeeService;
 public class EmployeeController {
 
 	@Autowired
-	RestTemplate restTemplate;
-	
-	@Autowired
 	EmployeeService employeeService;
-	
+
 	@GetMapping("/employees")
 	public String getEmployee() {
-		String address=restTemplate.getForObject("http://localhost:8080/address", String.class);
-		return "I am abhishek sable-123 "+address;
+		// String address=restTemplate.getForObject("http://localhost:8080/address",
+		// String.class);
+		return "I am abhishek sable-123 ";
 	}
-	
+
 	@GetMapping("/employees/{id}")
-	public ResponseEntity<EmployeeDTO> getEmployeeDetails(@PathVariable("id") int id){
+	public ResponseEntity<EmployeeDTO> getEmployeeDetails(@PathVariable("id") int id) {
 		return ResponseEntity.status(HttpStatus.OK).body(employeeService.getEmployee(id));
 	}
 }

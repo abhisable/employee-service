@@ -3,6 +3,7 @@ package com.empmgmt.employeeservice.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,19 +20,28 @@ public class EmployeeService {
 
 	@Autowired
 	ModelMapper modelMapper;
-	
-	@Autowired
+
+	// @Autowired
 	RestTemplate restTemplate;
-	
-	@Value("${addressservice.base.url}")
-	private String addressBaseUrl;
+
+//	@Value("${addressservice.base.url}")
+//	private String addressBaseUrl;
+
+	/*
+	 * here we need to give addressBaseUrl in parameter section only because
+	 * resttemplate will be created at the time of bean creation and addressBaseUrl
+	 * will be null at that time
+	 */
+	public EmployeeService(@Value("${addressservice.base.url}") String addressBaseUrl, RestTemplateBuilder builder) {
+		this.restTemplate = builder.rootUri(addressBaseUrl).build();
+	}
 
 	public EmployeeDTO getEmployee(int id) {
 
 		EmployeeEntity employee = employeeRepo.findById(id).get();
 
 		EmployeeDTO empDTO = modelMapper.map(employee, EmployeeDTO.class);
-		AddressDTO addressDTO = restTemplate.getForObject(addressBaseUrl+"/address/{id}", AddressDTO.class, id);
+		AddressDTO addressDTO = restTemplate.getForObject("/address/{id}", AddressDTO.class, id);
 		empDTO.setAddressDTO(addressDTO);
 		return empDTO;
 	}

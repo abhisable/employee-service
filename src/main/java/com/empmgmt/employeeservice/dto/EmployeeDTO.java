@@ -1,30 +1,22 @@
 package com.empmgmt.employeeservice.dto;
 
-import com.empmgmt.employeeservice.entity.EmployeeEntity;
-
 public class EmployeeDTO {
 
 	int id;
 	private String name;
 	private String email;
 	private String bloodGroup;
+	private AddressDTO addressDTO;
 
-//	public static EmployeeEntity getEmployeeEntity(EmployeeDTO empDTO) {
-//		EmployeeEntity empEntity=new EmployeeEntity();
-//		empEntity.setBloodGroup(empDTO.getBloodGroup());
-//		empEntity.setEmail(empDTO.getEmail());
-//		empEntity.setName(empDTO.getName());
-//		return empEntity;
-//	}
-//	
-//	public static EmployeeDTO getEmployeeDTO(EmployeeEntity empEntity) {
-//		EmployeeDTO empDTO=new EmployeeDTO();
-//		empDTO.setId(empEntity.getId());
-//		empDTO.setBloodGroup(empEntity.getBloodGroup());
-//		empDTO.setName(empEntity.getName());
-//		empDTO.setEmail(empEntity.getEmail());
-//		return empDTO;
-//	}
+
+	public AddressDTO getAddressDTO() {
+		return addressDTO;
+	}
+
+	public void setAddressDTO(AddressDTO addressDTO) {
+		this.addressDTO = addressDTO;
+	}
+
 	public int getId() {
 		return id;
 	}

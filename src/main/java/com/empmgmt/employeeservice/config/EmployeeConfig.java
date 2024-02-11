@@ -1,20 +1,27 @@
 package com.empmgmt.employeeservice.config;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class EmployeeConfig {
 
-//	@Bean
-//	public RestTemplate getRestTemplate() {
-//		return new RestTemplate();
-//	}
-	
+	@Value("${addressservice.base.url}")
+	private String addressServiceBaseUrl;
+
 	@Bean
 	public ModelMapper getModelMapper() {
 		return new ModelMapper();
+	}
+
+	@Bean
+	public WebClient webClient() {
+		return WebClient
+				.builder()
+				.baseUrl(addressServiceBaseUrl)
+				.build();
 	}
 }

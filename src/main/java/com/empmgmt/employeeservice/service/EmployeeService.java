@@ -2,10 +2,8 @@ package com.empmgmt.employeeservice.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.empmgmt.employeeservice.dto.AddressDTO;
 import com.empmgmt.employeeservice.dto.EmployeeDTO;
@@ -21,27 +19,22 @@ public class EmployeeService {
 	@Autowired
 	ModelMapper modelMapper;
 
-	// @Autowired
-	RestTemplate restTemplate;
-
-//	@Value("${addressservice.base.url}")
-//	private String addressBaseUrl;
-
-	/*
-	 * here we need to give addressBaseUrl in parameter section only because
-	 * resttemplate will be created at the time of bean creation and addressBaseUrl
-	 * will be null at that time
-	 */
-	public EmployeeService(@Value("${addressservice.base.url}") String addressBaseUrl, RestTemplateBuilder builder) {
-		this.restTemplate = builder.rootUri(addressBaseUrl).build();
-	}
+	@Autowired
+	WebClient webClient;
+	
 
 	public EmployeeDTO getEmployee(int id) {
 
 		EmployeeEntity employee = employeeRepo.findById(id).get();
 
 		EmployeeDTO empDTO = modelMapper.map(employee, EmployeeDTO.class);
-		AddressDTO addressDTO = restTemplate.getForObject("/address/{id}", AddressDTO.class, id);
+		AddressDTO addressDTO = webClient
+				.get()
+				.uri("/address/"+id)
+				.retrieve()
+				.bodyToMono(AddressDTO.class)
+				.block();
+		
 		empDTO.setAddressDTO(addressDTO);
 		return empDTO;
 	}

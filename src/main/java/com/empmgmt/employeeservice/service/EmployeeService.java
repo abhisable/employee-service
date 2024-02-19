@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,8 +31,11 @@ public class EmployeeService {
 	@Autowired
 	RestTemplate restTemplate;
 
+//	@Autowired
+//	DiscoveryClient discoveryClient;
+	
 	@Autowired
-	DiscoveryClient discoveryClient;
+	LoadBalancerClient loadBalancerClient;
 
 	public EmployeeDTO getEmployee(int id) {
 
@@ -48,8 +52,8 @@ public class EmployeeService {
 
 	private AddressDTO getAddressDTO(int id) {
 
-		List<ServiceInstance> instances = discoveryClient.getInstances("address-service");
-		String uri = instances.get(0).getUri().toString();
+		ServiceInstance instances = loadBalancerClient.choose("address-service");
+		String uri = instances.getUri().toString();
 
 		System.out.println("uri is >>>>>>>>>>>>>>>> " + uri);
 		return restTemplate.getForObject(uri + "/address-app/api/address/{empId}", AddressDTO.class, id);

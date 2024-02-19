@@ -31,11 +31,6 @@ public class EmployeeService {
 	@Autowired
 	RestTemplate restTemplate;
 
-//	@Autowired
-//	DiscoveryClient discoveryClient;
-	
-	@Autowired
-	LoadBalancerClient loadBalancerClient;
 
 	public EmployeeDTO getEmployee(int id) {
 
@@ -52,12 +47,7 @@ public class EmployeeService {
 
 	private AddressDTO getAddressDTO(int id) {
 
-		ServiceInstance instances = loadBalancerClient.choose("address-service");
-		String uri = instances.getUri().toString();
-		String context_path=instances.getMetadata().get("configPath");
-
-		System.out.println("uri is >>>>>>>>>>>>>>>> " + uri+context_path);
-		return restTemplate.getForObject(uri + context_path+"/address/{empId}", AddressDTO.class, id);
+		return restTemplate.getForObject("http://address-service/address-app/api/address/{empId}", AddressDTO.class, id);
 
 	}
 }

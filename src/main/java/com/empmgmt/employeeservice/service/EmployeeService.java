@@ -1,8 +1,13 @@
 package com.empmgmt.employeeservice.service;
 
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.empmgmt.employeeservice.dto.AddressDTO;
 import com.empmgmt.employeeservice.dto.EmployeeDTO;
@@ -21,16 +26,33 @@ public class EmployeeService {
 
 	@Autowired
 	AddressClient addressClient;
-	
+
+	@Autowired
+	RestTemplate restTemplate;
+
+	@Autowired
+	DiscoveryClient discoveryClient;
 
 	public EmployeeDTO getEmployee(int id) {
 
 		EmployeeEntity employee = employeeRepo.findById(id).get();
 
 		EmployeeDTO empDTO = modelMapper.map(employee, EmployeeDTO.class);
-		AddressDTO addressDTO = addressClient.getAddressByEmployeeId(id);
-		
+		// AddressDTO addressDTO = addressClient.getAddressByEmployeeId(id);
+
+		AddressDTO addressDTO = getAddressDTO(id);
+
 		empDTO.setAddressDTO(addressDTO);
 		return empDTO;
+	}
+
+	private AddressDTO getAddressDTO(int id) {
+
+		List<ServiceInstance> instances = discoveryClient.getInstances("address-service");
+		String uri = instances.get(0).getUri().toString();
+
+		System.out.println("uri is >>>>>>>>>>>>>>>> " + uri);
+		return restTemplate.getForObject(uri + "/address-app/api/address/{empId}", AddressDTO.class, id);
+
 	}
 }

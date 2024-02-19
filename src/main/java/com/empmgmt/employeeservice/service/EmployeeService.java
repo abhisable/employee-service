@@ -54,9 +54,10 @@ public class EmployeeService {
 
 		ServiceInstance instances = loadBalancerClient.choose("address-service");
 		String uri = instances.getUri().toString();
+		String context_path=instances.getMetadata().get("configPath");
 
-		System.out.println("uri is >>>>>>>>>>>>>>>> " + uri);
-		return restTemplate.getForObject(uri + "/address-app/api/address/{empId}", AddressDTO.class, id);
+		System.out.println("uri is >>>>>>>>>>>>>>>> " + uri+context_path);
+		return restTemplate.getForObject(uri + context_path+"/address/{empId}", AddressDTO.class, id);
 
 	}
 }

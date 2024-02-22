@@ -1,12 +1,7 @@
 package com.empmgmt.employeeservice.service;
 
-import java.util.List;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,9 +32,9 @@ public class EmployeeService {
 		EmployeeEntity employee = employeeRepo.findById(id).get();
 
 		EmployeeDTO empDTO = modelMapper.map(employee, EmployeeDTO.class);
-		// AddressDTO addressDTO = addressClient.getAddressByEmployeeId(id);
+		AddressDTO addressDTO = addressClient.getAddressByEmployeeId(id);
 
-		AddressDTO addressDTO = getAddressDTO(id);
+		//AddressDTO addressDTO = getAddressDTO(id);
 
 		empDTO.setAddressDTO(addressDTO);
 		return empDTO;
